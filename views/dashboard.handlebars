@@ -1,0 +1,133 @@
+<div class="row">
+  <!-- Profil résumé à gauche -->
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body text-center">
+        <img src="{{user.profileImageUrl}}" alt="{{user.name}}" class="rounded-circle mb-3" width="100">
+        <h5>{{user.name}}</h5>
+        <a href="/users/profile" class="btn btn-sm btn-outline-primary">Voir profil</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Création de post et fil d'actualité -->
+  <div class="col-md-9">
+    <!-- Formulaire de création de post -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form action="/posts" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <textarea class="form-control" name="content" placeholder="Quoi de neuf?" rows="3" required></textarea>
+          </div>
+          <div class="d-flex justify-content-between">
+            <div class="mb-3">
+              <label for="image" class="form-label">Image (optionnel)</label>
+              <input class="form-control" type="file" id="image" name="image" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-primary">Publier</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Fil d'actualité -->
+    <h4>Fil d'actualité</h4>
+    
+    {{#if posts.length}}
+      {{#each posts}}
+        <div class="card mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <img src="{{userProfileImageUrl}}" alt="{{userName}}" class="rounded-circle me-2" width="30">
+              <a href="/users/{{userId}}">{{userName}}</a>
+            </div>
+            <small>{{formatDate createdAt}}</small>
+          </div>
+          <div class="card-body">
+            <p>{{content}}</p>
+            {{#if imageUrl}}
+              <img src="{{imageUrl}}" alt="Image du post" class="img-fluid mb-3">
+            {{/if}}
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div>
+                {{#if likes}}
+                  <span class="me-2">
+                    <i class="fas fa-heart text-danger"></i> {{objLength likes}}
+                  </span>
+                {{/if}}
+                
+                {{#if comments}}
+                  <span>
+                    <i class="fas fa-comment text-primary"></i> {{objLength comments}}
+                  </span>
+                {{/if}}
+              </div>
+              
+              <div>
+                {{#if (eq userId ../user.uid)}}
+                  <span class="badge bg-secondary">Vous</span>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-footer">
+            <div class="d-flex mb-3">
+              {{#if likes.[../user.uid]}}
+                <form action="/posts/{{id}}/unlike" method="POST" class="me-2">
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="fas fa-heart"></i> Unlike
+                  </button>
+                </form>
+              {{else}}
+                <form action="/posts/{{id}}/like" method="POST" class="me-2">
+                  <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="far fa-heart"></i> Like
+                  </button>
+                </form>
+              {{/if}}
+              <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#comments-{{id}}">
+                <i class="far fa-comment"></i> Commentaires
+              </button>
+            </div>
+            
+            <div class="collapse" id="comments-{{id}}">
+              <!-- Liste des commentaires -->
+              {{#if comments}}
+                <div class="comments-list mb-3">
+                  {{#each comments}}
+                    <div class="d-flex mb-2">
+                      <img src="{{userProfileImageUrl}}" alt="{{userName}}" class="rounded-circle me-2" width="30">
+                      <div class="comment-content">
+                        <div class="d-flex align-items-center">
+                          <strong class="me-2">{{userName}}</strong>
+                          <small class="text-muted">{{formatDate createdAt}}</small>
+                        </div>
+                        <p class="mb-0">{{content}}</p>
+                      </div>
+                    </div>
+                  {{/each}}
+                </div>
+              {{/if}}
+              
+              <!-- Formulaire de commentaire -->
+              <form action="/posts/{{id}}/comment" method="POST">
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-sm" name="content" placeholder="Ajouter un commentaire..." required>
+                  <button class="btn btn-sm btn-primary" type="submit">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="alert alert-info">
+        Aucun post à afficher. Commencez à suivre des utilisateurs pour voir leurs publications!
+      </div>
+    {{/if}}
+  </div>
+</div>

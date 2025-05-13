@@ -1,0 +1,14 @@
+<div class="jumbotron text-center">
+  <h1 class="display-4">Bienvenue sur notre Réseau Social</h1>
+  <p class="lead">Connectez-vous avec des amis et partagez vos moments</p>
+  {{#unless user}}
+    <div class="mt-4">
+      <a href="/auth/login" class="btn btn-primary me-2">Connexion</a>
+      <a href="/auth/register" class="btn btn-secondary">Inscription</a>
+    </div>
+  {{else}}
+    <div class="mt-4">
+      <a href="/dashboard" class="btn btn-primary">Accéder à mon tableau de bord</a>
+    </div>
+  {{/unless}}
+</div>
